@@ -295,8 +295,7 @@ public class Splendor extends Application {
         List<Integer> freshViewOfOwnedResources = playerActions.getPlayerResourcesOwned(true);
         for(int i=0; i<6; i++) {
             String theValue = freshViewOfOwnedResources.get(i).toString();
-
-            leftSideResourcesOwned.add(new Text(theValue));
+            leftSideResourcesOwned.get(i).setText(theValue);
         }
     }
 
