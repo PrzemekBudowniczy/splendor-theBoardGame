@@ -3,6 +3,7 @@ package com.kodilla.splendor;
 import javafx.application.Application;
 import javafx.geometry.*;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -15,13 +16,35 @@ import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class Splendor extends Application {
 
     private Image imageBack = new Image("file:src/main/resources/general/background_dark.png");
 
     private FlowPane flowPane = new FlowPane(Orientation.HORIZONTAL);
+
+    ImageView reverse1;
+    ImageView set1slot1;
+    ImageView set1slot2;
+    ImageView set1slot3;
+
+    ImageView reverse2;
+    ImageView set2slot1;
+    ImageView set2slot2;
+    ImageView set2slot3;
+
+    ImageView reverse3;
+    ImageView set3slot1;
+    ImageView set3slot2;
+    ImageView set3slot3;
+
+    List<ImageView> allVisibleCardsOnTable = new ArrayList<>();
+    PlayerActions playerActions = new PlayerActions();
+    List<Text> leftSideResourcesOwned = new ArrayList<>();
+    GridPane leftSideResources;
+    Scene scene;
+
+    GridPane centralCardDeck;
 
     public static void main(String[] args) {
         launch(args);
@@ -30,65 +53,25 @@ public class Splendor extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        Cards cards = new Cards();
+        CardsGraphics cards = new CardsGraphics();
+        CardsOnTheGame cardsOnTheGame = new CardsOnTheGame();
         OtherGraphics otherGraphics = new OtherGraphics();
 
-        ImageView reverse1 = new ImageView(cards.getReverses().get(0));
-        ImageView set1slot1 = new ImageView(cards.getCardsSet1().get(0));
-        ImageView set1slot2 = new ImageView(cards.getCardsSet1().get(1));
-        ImageView set1slot3 = new ImageView(cards.getCardsSet1().get(2));
 
-        ImageView reverse2 = new ImageView(cards.getReverses().get(1));
-        ImageView set2slot1 = new ImageView(cards.getCardsSet2().get(0));
-        ImageView set2slot2 = new ImageView(cards.getCardsSet2().get(1));
-        ImageView set2slot3 = new ImageView(cards.getCardsSet2().get(2));
-
-        ImageView reverse3 = new ImageView(cards.getReverses().get(2));
-        ImageView set3slot1 = new ImageView(cards.getCardsSet3().get(0));
-        ImageView set3slot2 = new ImageView(cards.getCardsSet3().get(1));
-        ImageView set3slot3 = new ImageView(cards.getCardsSet3().get(2));
-
-        flowPane.getChildren().add(reverse1);
-        flowPane.getChildren().add(set1slot1);
-        flowPane.getChildren().add(set1slot2);
-        flowPane.getChildren().add(set1slot3);
-
-        flowPane.getChildren().add(reverse2);
-        flowPane.getChildren().add(set2slot1);
-        flowPane.getChildren().add(set2slot2);
-        flowPane.getChildren().add(set2slot3);
-
-        flowPane.getChildren().add(reverse3);
-        flowPane.getChildren().add(set3slot1);
-        flowPane.getChildren().add(set3slot2);
-        flowPane.getChildren().add(set3slot3);
 
         BackgroundSize backgroundSize = new BackgroundSize(100, 100, true, true, true, false);
         BackgroundImage backgroundImage = new BackgroundImage(imageBack, BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
         Background background = new Background(backgroundImage);
 
-        GridPane centralCardDeck = new GridPane();
+        centralCardDeck = new GridPane();
         centralCardDeck.setAlignment(Pos.CENTER);
         centralCardDeck.setPadding(new Insets(1, 1, 1, 1));
         centralCardDeck.setHgap(5);
         centralCardDeck.setVgap(5);
 
-        centralCardDeck.add(reverse1, 0, 0, 1, 1);
-        centralCardDeck.add(set1slot1, 1, 0, 1, 1);
-        centralCardDeck.add(set1slot2, 2, 0, 1, 1);
-        centralCardDeck.add(set1slot3, 3, 0, 1, 1);
+        RefreshViewOfCardsOnTable(cardsOnTheGame);
 
-        centralCardDeck.add(reverse2, 0, 1, 1, 1);
-        centralCardDeck.add(set2slot1, 1, 1, 1, 1);
-        centralCardDeck.add(set2slot2, 2, 1, 1, 1);
-        centralCardDeck.add(set2slot3, 3, 1, 1, 1);
-
-        centralCardDeck.add(reverse3, 0, 2, 1, 1);
-        centralCardDeck.add(set3slot1, 1, 2, 1, 1);
-        centralCardDeck.add(set3slot2, 2, 2, 1, 1);
-        centralCardDeck.add(set3slot3, 3, 2, 1, 1);
-
-        GridPane leftSideResources = new GridPane();
+        leftSideResources = new GridPane();
         leftSideResources.setHgap(20);
         leftSideResources.setVgap(1);
         leftSideResources.setAlignment(Pos.CENTER);
@@ -111,7 +94,6 @@ public class Splendor extends Application {
         resourcesTableLabels.add(new Text(labelResourceOwned));
 
         List<Text> leftSideCostReduction = new ArrayList<>();
-        List<Text> leftSideResourcesOwned = new ArrayList<>();
         List<Text> rightSideCostReduction = new ArrayList<>();
         List<Text> rightSideResourcesOwned = new ArrayList<>();
 
@@ -160,14 +142,166 @@ public class Splendor extends Application {
 
         HBox fullDeck = new HBox(70, leftSideFullDeck, centralCardDeck, rightSideFullDeck);
         fullDeck.setMargin(centralCardDeck, new Insets(0, 0, 0, 0));
-        fullDeck.setBackground(background);
         fullDeck.setAlignment(Pos.CENTER);
 
-        Scene scene = new Scene(fullDeck, 1728, 972, Color.BLACK);
+        Text actions = new Text("Possible actions");
+        actions.setFont(Font.font("Arial", FontWeight.BOLD, 15));
+
+
+        List<Button> buttonsResources = new ArrayList<>();
+        buttonsResources.add(new Button("Black"));
+        buttonsResources.add(new Button("Blue"));
+        buttonsResources.add(new Button("Green"));
+        buttonsResources.add(new Button("Red"));
+        buttonsResources.add(new Button("White"));
+        buttonsResources.add(new Button("Reset selected"));
+
+        String styleNotPushedButton = "-fx-background-color: #ffffff; ";
+        for(Button button : buttonsResources) {
+            button.setStyle(styleNotPushedButton);
+        }
+
+        buttonsResources.get(0).setOnAction((event -> {
+            boolean isTransactionFinalized = PushedButtonAddingResource(buttonsResources.get(0), 1);
+            if (isTransactionFinalized == true) {
+                ButtonStyleResetForResources(buttonsResources);
+                RefreshViewOfOwnedResourcesHuman();
+            }
+        }));
+
+        buttonsResources.get(1).setOnAction((event -> {
+            boolean isTransactionFinalized = PushedButtonAddingResource(buttonsResources.get(1), 2);
+            if (isTransactionFinalized == true) {
+                ButtonStyleResetForResources(buttonsResources);
+                RefreshViewOfOwnedResourcesHuman();
+            }
+        }));
+
+        buttonsResources.get(2).setOnAction((event -> {
+            boolean isTransactionFinalized = PushedButtonAddingResource(buttonsResources.get(2), 3);
+            if (isTransactionFinalized == true) {
+                ButtonStyleResetForResources(buttonsResources);
+                RefreshViewOfOwnedResourcesHuman();
+            }
+        }));
+
+        buttonsResources.get(3).setOnAction((event -> {
+            boolean isTransactionFinalized = PushedButtonAddingResource(buttonsResources.get(3), 4);
+            if (isTransactionFinalized == true) {
+                ButtonStyleResetForResources(buttonsResources);
+                RefreshViewOfOwnedResourcesHuman();
+            }
+        }));
+
+        buttonsResources.get(4).setOnAction((event -> {
+            boolean isTransactionFinalized = PushedButtonAddingResource(buttonsResources.get(4), 5);
+            if (isTransactionFinalized == true) {
+                ButtonStyleResetForResources(buttonsResources);
+                RefreshViewOfOwnedResourcesHuman();
+            }
+        }));
+
+        buttonsResources.get(5).setOnAction((event -> {
+            ResetSelected(buttonsResources);
+        }));
+
+//        buttonResBlack.setOnAction((event -> {
+//            System.out.println("ClickedBlack");
+//            buttonResBlack.setStyle(stylePushedButton);
+//        }));
+
+
+
+        Text labelSelectResources = new Text("Select 3 resources");
+        labelSelectResources.setFont(Font.font("Arial", FontWeight.BOLD, 15));
+        HBox selectResources = new HBox(10, labelSelectResources, buttonsResources.get(0), buttonsResources.get(1), buttonsResources.get(2), buttonsResources.get(3), buttonsResources.get(4), buttonsResources.get(5));
+//        selectResources.setAlignment(Pos.CENTER);
+
+        Text labelBuyCard = new Text("To buy a card - click button & select a card");
+        labelBuyCard.setFont(Font.font("Arial", FontWeight.BOLD, 15));
+        Button buttonBuyCard = new Button("Buy card");
+        HBox buyCard = new HBox(5, labelBuyCard, buttonBuyCard);
+//        buyCard.setAlignment(Pos.CENTER);
+
+        VBox actionsPanel = new VBox(10, selectResources, buyCard);
+        actionsPanel.setAlignment(Pos.CENTER);
+
+        Text textPossibleActions = new Text("Possible actions: ");
+        textPossibleActions.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        textPossibleActions.setUnderline(true);
+        HBox topPanel = new HBox(30, textPossibleActions, actionsPanel);
+        topPanel.setAlignment(Pos.CENTER);
+
+        VBox fullTable = new VBox(20, topPanel, fullDeck);
+        fullTable.setBackground(background);
+        fullTable.setAlignment(Pos.CENTER);
+
+        scene = new Scene(fullTable, 1728, 972, Color.BLACK);
 
         primaryStage.setTitle("Splendor");
         primaryStage.setScene(scene);
         primaryStage.show();
+
+    }
+
+    private void ButtonStyleResetForResources(List<Button> buttons) {
+        String styleNotPushedButton = "-fx-background-color: #ffffff; ";
+        for(Button button : buttons) {
+            button.setStyle(styleNotPushedButton);
+        }
+    }
+
+    private boolean PushedButtonAddingResource(Button theButton, int resourceSelected) {
+        String stylePushedButton = "-fx-background-color: #ff0000; ";
+        theButton.setStyle(stylePushedButton);
+        return playerActions.AddSelectedResourceAndCheckIfTransactionFinalized(resourceSelected);
+    }
+
+    private void ResetSelected(List<Button> buttons) {
+        ButtonStyleResetForResources(buttons);
+        playerActions.clearSelectedResources();
+    }
+
+    public void RefreshViewOfCardsOnTable(CardsOnTheGame cardsOnTheGame) {
+
+        allVisibleCardsOnTable.add(new ImageView(cardsOnTheGame.getReverseForDeck().get(2)));
+        allVisibleCardsOnTable.add(new ImageView(cardsOnTheGame.getCardsOnTable().get(7).getCardGraphic()));
+        allVisibleCardsOnTable.add(new ImageView(cardsOnTheGame.getCardsOnTable().get(8).getCardGraphic()));
+        allVisibleCardsOnTable.add(new ImageView(cardsOnTheGame.getCardsOnTable().get(9).getCardGraphic()));
+
+        allVisibleCardsOnTable.add(new ImageView(cardsOnTheGame.getReverseForDeck().get(1)));
+        allVisibleCardsOnTable.add(new ImageView(cardsOnTheGame.getCardsOnTable().get(4).getCardGraphic()));
+        allVisibleCardsOnTable.add(new ImageView(cardsOnTheGame.getCardsOnTable().get(5).getCardGraphic()));
+        allVisibleCardsOnTable.add(new ImageView(cardsOnTheGame.getCardsOnTable().get(6).getCardGraphic()));
+
+        allVisibleCardsOnTable.add(new ImageView(cardsOnTheGame.getReverseForDeck().get(0)));
+        allVisibleCardsOnTable.add(new ImageView(cardsOnTheGame.getCardsOnTable().get(1).getCardGraphic()));
+        allVisibleCardsOnTable.add(new ImageView(cardsOnTheGame.getCardsOnTable().get(2).getCardGraphic()));
+        allVisibleCardsOnTable.add(new ImageView(cardsOnTheGame.getCardsOnTable().get(3).getCardGraphic()));
+
+        for(int i=1; i<13; i++) {
+            flowPane.getChildren().add(allVisibleCardsOnTable.get(i-1));
+            if(i < 5) {
+                centralCardDeck.add(allVisibleCardsOnTable.get(i-1), i-1, 0, 1, 1);
+            } else if (i < 9) {
+                centralCardDeck.add(allVisibleCardsOnTable.get(i-1), i-5, 1, 1, 1);
+            } else {
+                centralCardDeck.add(allVisibleCardsOnTable.get(i-1), i-9, 2, 1, 1);
+            }
+        }
+    }
+
+    public void RefreshViewOfOwnedResourcesHuman() {
+        List<Integer> freshViewOfOwnedResources = playerActions.getPlayerResourcesOwned(true);
+        for(int i=0; i<6; i++) {
+            String theValue = freshViewOfOwnedResources.get(i).toString();
+
+            leftSideResourcesOwned.add(new Text(theValue));
+        }
+    }
+
+    public List<Integer> RefreshViewOfOwnedResourcesComputer() {
+        return playerActions.getPlayerResourcesOwned(false);
     }
 
     public Text TextFormattingSmall(Text text) {
