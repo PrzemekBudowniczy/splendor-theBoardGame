@@ -8,6 +8,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -39,6 +41,8 @@ public class Splendor extends Application {
     ImageView set3slot3;
 
     List<ImageView> allVisibleCardsOnTable = new ArrayList<>();
+    List<Rectangle> allVisibleCardsOnTableWrapped = new ArrayList<>();
+    List<ImagePattern> allVisibleCardsOnTableImagePatterns = new ArrayList<>();
     PlayerActions playerActions = new PlayerActions();
     List<Text> leftSideResourcesOwned;
     List<Text> rightSideResourcesOwned;
@@ -162,12 +166,13 @@ public class Splendor extends Application {
             button.setStyle(styleNotPushedButton);
         }
 
-        for(int i=0; i<6; i++) {
+        for(int i=0; i<5; i++) {
             int finalI = i;
-            buttonsResources.get(i).setOnAction((event -> {
+            buttonsResources.get(i).setOnAction(vent -> {
                 PushedButtonAddingResource(buttonsResources.get(finalI), finalI +1);
-            }));
+            });
         }
+        buttonsResources.get(5).setOnAction(event -> {ResetSelected(buttonsResources);});
 
         Text labelSelectResources = new Text("Select 3 resources");
         labelSelectResources.setFont(Font.font("Arial", FontWeight.BOLD, 15));
@@ -197,15 +202,23 @@ public class Splendor extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        for(int i=1; i<12; i++) {
-            if(i == 4 || i == 8) {continue;}
-            int finalI = i;
-            allVisibleCardsOnTable.get(i).setOnMouseClicked(event -> HighlightCardToBuy(finalI));
-        }
+//        for(int i=1; i<12; i++) {
+//            if(i == 4 || i == 8) {continue;}
+//            allVisibleCardsOnTable.get(i).setOnMouseClicked(event -> HighlightCardToBuy(finalI));
+//        }
+        allVisibleCardsOnTable.get(1).setOnMouseClicked(event -> HighlightCardToBuy(1));
+        allVisibleCardsOnTable.get(2).setOnMouseClicked(event -> HighlightCardToBuy(2));
+        allVisibleCardsOnTable.get(3).setOnMouseClicked(event -> HighlightCardToBuy(3));
+        allVisibleCardsOnTable.get(5).setOnMouseClicked(event -> HighlightCardToBuy(4));
+        allVisibleCardsOnTable.get(6).setOnMouseClicked(event -> HighlightCardToBuy(5));
+        allVisibleCardsOnTable.get(7).setOnMouseClicked(event -> HighlightCardToBuy(6));
+        allVisibleCardsOnTable.get(9).setOnMouseClicked(event -> HighlightCardToBuy(7));
+        allVisibleCardsOnTable.get(10).setOnMouseClicked(event -> HighlightCardToBuy(8));
+        allVisibleCardsOnTable.get(11).setOnMouseClicked(event -> HighlightCardToBuy(9));
     }
 
     private void HighlightCardToBuy(int positionInTableCards) {
-        System.out.println("clicked");
+        System.out.println("clicked " + positionInTableCards);
 
     }
 
@@ -218,7 +231,7 @@ public class Splendor extends Application {
 
     private void PushedButtonAddingResource(Button theButton, int resourceSelected) {
 
-        String stylePushedButton = "-fx-background-color: #ff0000; ";
+        String stylePushedButton = "-fx-background-color: #3b3636; -fx-text-fill: #ffffff";
         theButton.setStyle(stylePushedButton);
         boolean isTransactionFinalized = playerActions.AddSelectedResourceAndCheckIfTransactionFinalized(resourceSelected);
 
@@ -249,6 +262,12 @@ public class Splendor extends Application {
         allVisibleCardsOnTable.add(new ImageView(cardsOnTheGame.getCardsOnTable().get(1).getCardGraphic()));
         allVisibleCardsOnTable.add(new ImageView(cardsOnTheGame.getCardsOnTable().get(2).getCardGraphic()));
         allVisibleCardsOnTable.add(new ImageView(cardsOnTheGame.getCardsOnTable().get(3).getCardGraphic()));
+
+        Rectangle newRectangle = new Rectangle(180, 252);
+        newRectangle.setArcHeight(30);
+        newRectangle.setArcWidth(30);
+        ImagePattern pattern = new ImagePattern(cardsOnTheGame.getReverseForDeck().get(2));
+        newRectangle.setFill(pattern);
 
         for(int i=1; i<13; i++) {
             flowPane.getChildren().add(allVisibleCardsOnTable.get(i-1));
