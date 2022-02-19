@@ -23,11 +23,9 @@ public class PlayerStatistics {
     }
 
     public void AddResourcesOwned(List<Integer> resourcesToAdd) {
-        for(int i=0; i<3; i++) {
-            int indexOfResourceToAdd = resourcesToAdd.get(i) - 1;
-            resOwned.set(indexOfResourceToAdd, resOwned.get(indexOfResourceToAdd) + 1);
+        for(int i=0; i<resourcesToAdd.size(); i++) {
+            resOwned.set(i, resOwned.get(i) + resourcesToAdd.get(i));
         }
-//        System.out.println(resOwned.toString());
     }
 
     public List<Integer> getCostReduction() {
@@ -38,17 +36,15 @@ public class PlayerStatistics {
         return resOwned;
     }
 
-    public void setCostReduction(List<Integer> costReduction) {
-        this.costReduction = costReduction;
+    public void setCostReduction(int theResourceIndex) {
+        costReduction.set(theResourceIndex, costReduction.get(theResourceIndex) + 1);
     }
 
     public void setResOwned(List<Integer> resOwned) {
         this.resOwned = resOwned;
     }
 
-    public void setPlayerScore(int playerScore) {
-        this.playerScore = playerScore;
-    }
+    public void setPlayerScore(int pointsToAdd) {playerScore += pointsToAdd;}
 
     public int getPlayerScore() {
         return playerScore;

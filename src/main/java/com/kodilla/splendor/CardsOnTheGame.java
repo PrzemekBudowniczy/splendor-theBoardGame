@@ -26,30 +26,18 @@ public class CardsOnTheGame {
 
         Card theResultCard;
         if(setNo == 1) {
-//            if(set1CardDeck.size() == 0) {
-//                theResultCard = generateEmptyCard(setNo);
-//            } else {
             int randomCardNumber = (int) (Math.random() * (set1CardDeck.size()));
             System.out.println(randomCardNumber);
             theResultCard = set1CardDeck.get(randomCardNumber);
             set1CardDeck.remove(randomCardNumber);
-//            }
         } else if(setNo == 2) {
-//            if(set2CardDeck.size() == 0) {
-//                theResultCard = generateEmptyCard(setNo);
-//            } else {
             int randomCardNumber = (int) (Math.random() * (set2CardDeck.size()));
             theResultCard = set2CardDeck.get(randomCardNumber);
             set2CardDeck.remove(randomCardNumber);
-//            }
         } else {
-//            if(set3CardDeck.size() == 0) {
-//                theResultCard = generateEmptyCard(setNo);
-//            } else {
             int randomCardNumber = (int) (Math.random() * (set3CardDeck.size()));
             theResultCard = set3CardDeck.get(randomCardNumber);
             set3CardDeck.remove(randomCardNumber);
-//            }
         }
         return theResultCard;
     }

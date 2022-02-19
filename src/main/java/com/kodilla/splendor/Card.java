@@ -2,9 +2,6 @@ package com.kodilla.splendor;
 
 import javafx.scene.image.Image;
 
-import java.awt.*;
-import java.util.ArrayList;
-
 public class Card {
 
     private int price1Black;
