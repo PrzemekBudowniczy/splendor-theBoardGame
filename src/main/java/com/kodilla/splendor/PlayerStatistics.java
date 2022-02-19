@@ -38,6 +38,18 @@ public class PlayerStatistics {
         return resOwned;
     }
 
+    public void setCostReduction(List<Integer> costReduction) {
+        this.costReduction = costReduction;
+    }
+
+    public void setResOwned(List<Integer> resOwned) {
+        this.resOwned = resOwned;
+    }
+
+    public void setPlayerScore(int playerScore) {
+        this.playerScore = playerScore;
+    }
+
     public int getPlayerScore() {
         return playerScore;
     }

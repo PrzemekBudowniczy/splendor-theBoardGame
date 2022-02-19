@@ -3,15 +3,17 @@ package com.kodilla.splendor;
 import javafx.scene.image.Image;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public class Card {
-    int price1Black;
-    int price2Blue;
-    int price3Green;
-    int price4Red;
-    int price5White;
-    int points;
-    int costReductionColor;
+
+    private int price1Black;
+    private int price2Blue;
+    private int price3Green;
+    private int price4Red;
+    private int price5White;
+    private int points;
+    private int costReductionColor;
     Image cardGraphic;
     boolean isBlank;
 
@@ -29,7 +31,7 @@ public class Card {
 
     private Image getCardGraphic(boolean isBlank, int setNo, int cardNo) {
         Image theCardGraphic;
-        if(isBlank == true) {
+        if(isBlank) {
             theCardGraphic = new Image("file:src/main/resources/general/emptySlot.png", 180, 252, false, false);
         } else {
             theCardGraphic = new Image("file:src/main/resources/set" + setNo + "/" + setNo + "." + cardNo + ".jpg", 180, 252, false, false);

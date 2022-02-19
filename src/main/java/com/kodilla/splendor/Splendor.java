@@ -3,7 +3,11 @@ package com.kodilla.splendor;
 import javafx.application.Application;
 import javafx.geometry.*;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.effect.Bloom;
+import javafx.scene.effect.InnerShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -49,6 +53,8 @@ public class Splendor extends Application {
     GridPane leftSideResources;
     Scene scene;
     List<Button> buttonsResources;
+    ImageView lastSelectedCardToBuy;
+    CardsOnTheGame cardsOnTheGame;
 
     GridPane centralCardDeck;
 
@@ -60,7 +66,7 @@ public class Splendor extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         CardsGraphics cards = new CardsGraphics();
-        CardsOnTheGame cardsOnTheGame = new CardsOnTheGame();
+        cardsOnTheGame = new CardsOnTheGame();
         OtherGraphics otherGraphics = new OtherGraphics();
 
         BackgroundSize backgroundSize = new BackgroundSize(100, 100, true, true, true, false);
@@ -75,7 +81,7 @@ public class Splendor extends Application {
         centralCardDeck.setHgap(5);
         centralCardDeck.setVgap(5);
 
-        RefreshViewOfCardsOnTable(cardsOnTheGame);
+        RefreshViewOfCardsOnTable();
 
         leftSideResources = new GridPane();
         leftSideResources.setHgap(20);
@@ -178,18 +184,13 @@ public class Splendor extends Application {
         labelSelectResources.setFont(Font.font("Arial", FontWeight.BOLD, 15));
         HBox selectResources = new HBox(10, labelSelectResources, buttonsResources.get(0), buttonsResources.get(1), buttonsResources.get(2), buttonsResources.get(3), buttonsResources.get(4), buttonsResources.get(5));
 
-        Text labelBuyCard = new Text("To buy a card - click button & select a card");
-        labelBuyCard.setFont(Font.font("Arial", FontWeight.BOLD, 15));
-        Button buttonBuyCard = new Button("Buy card");
-        HBox buyCard = new HBox(5, labelBuyCard, buttonBuyCard);
-
-        VBox actionsPanel = new VBox(10, selectResources, buyCard);
+        VBox actionsPanel = new VBox(10, selectResources);
         actionsPanel.setAlignment(Pos.CENTER);
 
-        Text textPossibleActions = new Text("Possible actions: ");
-        textPossibleActions.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-        textPossibleActions.setUnderline(true);
-        HBox topPanel = new HBox(30, textPossibleActions, actionsPanel);
+        VBox resourcesInCentralVault = new VBox(10);
+        actionsPanel.setAlignment(Pos.CENTER);
+
+        HBox topPanel = new HBox(30, resourcesInCentralVault, actionsPanel);
         topPanel.setAlignment(Pos.CENTER);
 
         VBox fullTable = new VBox(20, topPanel, fullDeck);
@@ -206,20 +207,43 @@ public class Splendor extends Application {
 //            if(i == 4 || i == 8) {continue;}
 //            allVisibleCardsOnTable.get(i).setOnMouseClicked(event -> HighlightCardToBuy(finalI));
 //        }
-        allVisibleCardsOnTable.get(1).setOnMouseClicked(event -> HighlightCardToBuy(1));
-        allVisibleCardsOnTable.get(2).setOnMouseClicked(event -> HighlightCardToBuy(2));
-        allVisibleCardsOnTable.get(3).setOnMouseClicked(event -> HighlightCardToBuy(3));
-        allVisibleCardsOnTable.get(5).setOnMouseClicked(event -> HighlightCardToBuy(4));
-        allVisibleCardsOnTable.get(6).setOnMouseClicked(event -> HighlightCardToBuy(5));
-        allVisibleCardsOnTable.get(7).setOnMouseClicked(event -> HighlightCardToBuy(6));
-        allVisibleCardsOnTable.get(9).setOnMouseClicked(event -> HighlightCardToBuy(7));
-        allVisibleCardsOnTable.get(10).setOnMouseClicked(event -> HighlightCardToBuy(8));
-        allVisibleCardsOnTable.get(11).setOnMouseClicked(event -> HighlightCardToBuy(9));
+        allVisibleCardsOnTable.get(1).setOnMouseClicked(event -> HighlightCardToBuy(7, allVisibleCardsOnTable.get(1)));
+        allVisibleCardsOnTable.get(2).setOnMouseClicked(event -> HighlightCardToBuy(8, allVisibleCardsOnTable.get(2)));
+        allVisibleCardsOnTable.get(3).setOnMouseClicked(event -> HighlightCardToBuy(9, allVisibleCardsOnTable.get(3)));
+        allVisibleCardsOnTable.get(5).setOnMouseClicked(event -> HighlightCardToBuy(4, allVisibleCardsOnTable.get(5)));
+        allVisibleCardsOnTable.get(6).setOnMouseClicked(event -> HighlightCardToBuy(5, allVisibleCardsOnTable.get(6)));
+        allVisibleCardsOnTable.get(7).setOnMouseClicked(event -> HighlightCardToBuy(6, allVisibleCardsOnTable.get(7)));
+        allVisibleCardsOnTable.get(9).setOnMouseClicked(event -> HighlightCardToBuy(1, allVisibleCardsOnTable.get(9)));
+        allVisibleCardsOnTable.get(10).setOnMouseClicked(event -> HighlightCardToBuy(2, allVisibleCardsOnTable.get(10)));
+        allVisibleCardsOnTable.get(11).setOnMouseClicked(event -> HighlightCardToBuy(3, allVisibleCardsOnTable.get(11)));
     }
 
-    private void HighlightCardToBuy(int positionInTableCards) {
+    private void HighlightCardToBuy(int positionInTableCards, ImageView selectedCard) {
+//        if(lastSelectedCardToBuy != null) {lastSelectedCardToBuy.setEffect(null);}
         System.out.println("clicked " + positionInTableCards);
+        InnerShadow innerShadow = new InnerShadow(70, Color.BLACK);
+        selectedCard.setEffect(innerShadow);
+        lastSelectedCardToBuy = selectedCard;
 
+        Alert alert = new Alert(Alert.AlertType.NONE, "Do you want to buy the card?", ButtonType.YES, ButtonType.NO);
+        alert.showAndWait();
+
+        if(alert.getResult() == ButtonType.YES) {
+            System.out.println("try to buy - yes");
+            playerActions.BuyCard(positionInTableCards, cardsOnTheGame);
+            RefreshViewOfCardsOnTable();
+            RefreshViewOfOwnedResourcesHuman();
+            RefreshViewOfOwnedResourcesComputer();
+
+//            Alert information = new Alert(Alert.AlertType.INFORMATION, message, ButtonType.OK);
+//            alert.showAndWait();
+        }
+
+        if (alert.getResult() == ButtonType.NO) {
+            System.out.println("try to buy - no");
+        }
+
+        lastSelectedCardToBuy.setEffect(null);
     }
 
     private void ButtonStyleResetForResources(List<Button> buttons) {
@@ -235,7 +259,7 @@ public class Splendor extends Application {
         theButton.setStyle(stylePushedButton);
         boolean isTransactionFinalized = playerActions.AddSelectedResourceAndCheckIfTransactionFinalized(resourceSelected);
 
-        if (isTransactionFinalized == true) {
+        if (isTransactionFinalized) {
             ButtonStyleResetForResources(buttonsResources);
             RefreshViewOfOwnedResourcesHuman();
         }
@@ -246,7 +270,7 @@ public class Splendor extends Application {
         playerActions.clearSelectedResources();
     }
 
-    public void RefreshViewOfCardsOnTable(CardsOnTheGame cardsOnTheGame) {
+    public void RefreshViewOfCardsOnTable() {
 
         allVisibleCardsOnTable.add(new ImageView(cardsOnTheGame.getReverseForDeck().get(2)));
         allVisibleCardsOnTable.add(new ImageView(cardsOnTheGame.getCardsOnTable().get(7).getCardGraphic()));
