@@ -26,15 +26,18 @@ public class CardsOnTheGame {
 
         Card theResultCard;
         if(setNo == 1) {
+            if(checkIfNoMoreCardsOnDeck(1)) {return new Card(true, 1, 1);}
             int randomCardNumber = (int) (Math.random() * (set1CardDeck.size()));
             System.out.println(randomCardNumber);
             theResultCard = set1CardDeck.get(randomCardNumber);
             set1CardDeck.remove(randomCardNumber);
         } else if(setNo == 2) {
+            if(checkIfNoMoreCardsOnDeck(2)) {return new Card(true, 1, 1);}
             int randomCardNumber = (int) (Math.random() * (set2CardDeck.size()));
             theResultCard = set2CardDeck.get(randomCardNumber);
             set2CardDeck.remove(randomCardNumber);
         } else {
+            if(checkIfNoMoreCardsOnDeck(3)) {return new Card(true, 1, 1);}
             int randomCardNumber = (int) (Math.random() * (set3CardDeck.size()));
             theResultCard = set3CardDeck.get(randomCardNumber);
             set3CardDeck.remove(randomCardNumber);
@@ -42,8 +45,23 @@ public class CardsOnTheGame {
         return theResultCard;
     }
 
-    public void putNewCardOnTable(int setNo, int positionInTable) {
+    private boolean checkIfNoMoreCardsOnDeck(int setNo) {
+        if(setNo == 1 && set1CardDeck.size() == 0) {
+            return true;
+        } else if(setNo == 2 && set2CardDeck.size() == 0) {
+            return true;
+        } else if(setNo == 3 && set3CardDeck.size() == 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public void PutNewCardOnTable(int setNo, int positionInTable) {
         cardsOnTable.put((setNo*3 - 3) + positionInTable, DrawCard(setNo));
+    }
+
+    public void ReplaceCardOnTable(int setNo, int positionInTable) {
+        cardsOnTable.replace((setNo*3 - 3) + positionInTable, DrawCard(setNo));
     }
 
     public Map<Integer, Card> getCardsOnTable() {
@@ -62,9 +80,26 @@ public class CardsOnTheGame {
         for(int x=1; x<4; x++) {
             reverseForDeck.add(cardsGraphics.getCardReverseImages().get(x-1));
             for(int y=1; y<4; y++) {
-                putNewCardOnTable(x, y);
+                PutNewCardOnTable(x, y);
             }
         }
+    }
+
+    public void removeBoughtAndDrawNewCard(int cardIndexInTable) {
+        int setNo;
+        int positionInTable;
+        if(cardIndexInTable<4) {
+            setNo = 1;
+            positionInTable = cardIndexInTable;
+        } else if(cardIndexInTable < 7) {
+            setNo = 2;
+            positionInTable = cardIndexInTable - 3;
+        } else {
+            setNo = 3;
+            positionInTable = cardIndexInTable - 6;
+        }
+        System.out.println("setNo " + setNo + " position " + positionInTable);
+        ReplaceCardOnTable(setNo, positionInTable);
     }
 
     private void GenerateSetsOfCards() {
@@ -107,7 +142,7 @@ public class CardsOnTheGame {
         set1CardDeck.add(new Card(2,0,1,0,2,0,4,1,37,false));
         set1CardDeck.add(new Card(0,1,1,1,1,0,1,1,38,false));
         set1CardDeck.add(new Card(0,4,0,0,0,1,1,1,39,false));
-        set1CardDeck.add(new Card(0,0,0,0,3,0,5,1,40,false));
+        set1CardDeck.add(new Card(0,3,0,0,0,0,5,1,40,false));
 
         set2CardDeck.add(new Card(0,0,0,0,5,2,1,2,1,false));
         set2CardDeck.add(new Card(0,0,5,3,0,2,1,2,2,false));

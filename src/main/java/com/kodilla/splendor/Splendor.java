@@ -91,7 +91,7 @@ public class Splendor extends Application {
         centralCardDeck.setHgap(5);
         centralCardDeck.setVgap(5);
 
-        RefreshViewOfCardsOnTable();
+        RefreshViewOfCardsOnTable(false);
 
         leftSideResources = new GridPane();
         leftSideResources.setHgap(20);
@@ -244,7 +244,7 @@ public class Splendor extends Application {
         getSelectedRes.setOnMouseClicked(event -> FinalizeAddingNewResources());
     }
 
-    private void TryToBuyTheCard(int positionInTableCards, ImageView selectedCard) {
+    private void TryToBuyTheCard(int cardIndexInTable, ImageView selectedCard) {
         InnerShadow innerShadow = new InnerShadow(70, Color.BLACK);
         selectedCard.setEffect(innerShadow);
         lastSelectedCardToBuy = selectedCard;
@@ -253,13 +253,14 @@ public class Splendor extends Application {
         alert.showAndWait();
 
         if(alert.getResult() == ButtonType.YES) {
-            playerActions.BuyCard(positionInTableCards, cardsOnTheGame);
-            RefreshViewOfCardsOnTable();
+            playerActions.BuyCard(cardIndexInTable, cardsOnTheGame);
+            RefreshViewOfCardsOnTable(true);
             RefreshViewOfOwnedResourcesHuman();
             RefreshViewOfOwnedResourcesComputer();
             RefreshViewOfCostReductionHuman();
             RefreshViewOfBanksResources();
             RefreshViewOfScoreHuman();
+
         }
 
         lastSelectedCardToBuy.setEffect(null);
@@ -298,7 +299,23 @@ public class Splendor extends Application {
         }
     }
 
-    public void RefreshViewOfCardsOnTable() {
+    public void RefreshViewOfCardsOnTable(boolean isItNotNew) {
+
+        if(isItNotNew) {
+
+            allVisibleCardsOnTable.get(1).setImage(cardsOnTheGame.getCardsOnTable().get(7).getCardGraphic());
+            allVisibleCardsOnTable.get(2).setImage(cardsOnTheGame.getCardsOnTable().get(8).getCardGraphic());
+            allVisibleCardsOnTable.get(3).setImage(cardsOnTheGame.getCardsOnTable().get(9).getCardGraphic());
+
+            allVisibleCardsOnTable.get(5).setImage(cardsOnTheGame.getCardsOnTable().get(4).getCardGraphic());
+            allVisibleCardsOnTable.get(6).setImage(cardsOnTheGame.getCardsOnTable().get(5).getCardGraphic());
+            allVisibleCardsOnTable.get(7).setImage(cardsOnTheGame.getCardsOnTable().get(6).getCardGraphic());
+
+            allVisibleCardsOnTable.get(9).setImage(cardsOnTheGame.getCardsOnTable().get(1).getCardGraphic());
+            allVisibleCardsOnTable.get(10).setImage(cardsOnTheGame.getCardsOnTable().get(2).getCardGraphic());
+            allVisibleCardsOnTable.get(11).setImage(cardsOnTheGame.getCardsOnTable().get(3).getCardGraphic());
+            return;
+        }
 
         allVisibleCardsOnTable.add(new ImageView(cardsOnTheGame.getReverseForDeck().get(2)));
         allVisibleCardsOnTable.add(new ImageView(cardsOnTheGame.getCardsOnTable().get(7).getCardGraphic()));

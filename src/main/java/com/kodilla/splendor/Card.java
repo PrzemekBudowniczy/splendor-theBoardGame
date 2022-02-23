@@ -2,28 +2,32 @@ package com.kodilla.splendor;
 
 import javafx.scene.image.Image;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Card {
 
-    private int price1Black;
-    private int price2Blue;
-    private int price3Green;
-    private int price4Red;
-    private int price5White;
     private int points;
     private int costReductionColor;
+    List<Integer> price;
     Image cardGraphic;
     boolean isBlank;
 
     public Card(int price1Black, int price2Blue, int price3Green, int price4Red, int price5White, int points, int costReductionColor, int setNo, int cardNo, boolean isBlank) {
-        this.price1Black = price1Black;
-        this.price2Blue = price2Blue;
-        this.price3Green = price3Green;
-        this.price4Red = price4Red;
-        this.price5White = price5White;
+        price = new ArrayList<>();
+        price.add(price1Black);
+        price.add(price2Blue);
+        price.add(price3Green);
+        price.add(price4Red);
+        price.add(price5White);
         this.points = points;
         this.costReductionColor = costReductionColor;
         cardGraphic = getCardGraphic(isBlank, setNo, cardNo);
         this.isBlank = isBlank;
+    }
+
+    public Card(boolean isBlank, int setNo, int cardNo) {
+        cardGraphic = getCardGraphic(true, setNo, cardNo);
     }
 
     private Image getCardGraphic(boolean isBlank, int setNo, int cardNo) {
@@ -36,24 +40,8 @@ public class Card {
         return theCardGraphic;
     }
 
-    public int getPrice1Black() {
-        return price1Black;
-    }
-
-    public int getPrice2Blue() {
-        return price2Blue;
-    }
-
-    public int getPrice3Green() {
-        return price3Green;
-    }
-
-    public int getPrice4Red() {
-        return price4Red;
-    }
-
-    public int getPrice5White() {
-        return price5White;
+    public List<Integer> getCardPrice() {
+        return price;
     }
 
     public int getPoints() {

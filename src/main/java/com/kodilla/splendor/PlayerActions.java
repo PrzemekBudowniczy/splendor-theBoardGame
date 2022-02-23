@@ -14,8 +14,8 @@ public class PlayerActions {
     private PlayerStatistics humanPlayer;
     private PlayerStatistics computerPlayer;
     boolean isHumanTurn = true;
-    List<Integer> resOwned;
-    List<Integer> costReduction;
+//    List<Integer> resOwned;
+//    List<Integer> costReduction;
     List<Integer> theCentralBankResources;
 
     public PlayerActions() {
@@ -60,6 +60,14 @@ public class PlayerActions {
         if(theCentralBankResources.get(selection) - selectedResources.get(selection) == 0) {
             text.setOpacity(0);
             Alert alert = new Alert(Alert.AlertType.NONE, "Not enough units of selected resource in central bank", ButtonType.CLOSE);
+            alert.showAndWait();
+            return false;
+        }
+
+        int sumOfResOwnedAndSelected = numberOfResOwned(true) + sumOfSelected + 1;
+        if(sumOfResOwnedAndSelected > 10) {
+            System.out.println("resOwned " + numberOfResOwned(true));
+            Alert alert = new Alert(Alert.AlertType.NONE, "Maximum number of resources on your vault can be 10 units. You can't add more.", ButtonType.CLOSE);
             alert.showAndWait();
             return false;
         }
@@ -120,10 +128,12 @@ public class PlayerActions {
 
     public void BuyCard(int selectedCard, CardsOnTheGame cardsOnTheGame) {
 
+        List<Integer> resOwned;
+        List<Integer> costReduction;
         Card theSelectedCard;
         boolean canCardBeBought = true;
         String message;
-
+        System.out.println("human before buy: " + humanPlayer.getResOwned() + " " + humanPlayer.getCostReduction());
         if(isHumanTurn = true) {
             resOwned = humanPlayer.getResOwned();
             costReduction = humanPlayer.getCostReduction();
@@ -136,11 +146,15 @@ public class PlayerActions {
 
         List<Integer> calculationIfEnoughResourcesToBuy = new ArrayList<>();
         List<Integer> selectedCardCostWithIncludedReductionBonus = new ArrayList<>();
-        selectedCardCostWithIncludedReductionBonus.add(theSelectedCard.getPrice1Black() - costReduction.get(0));
-        selectedCardCostWithIncludedReductionBonus.add(theSelectedCard.getPrice2Blue() - costReduction.get(1));
-        selectedCardCostWithIncludedReductionBonus.add(theSelectedCard.getPrice3Green() - costReduction.get(2));
-        selectedCardCostWithIncludedReductionBonus.add(theSelectedCard.getPrice4Red() - costReduction.get(3));
-        selectedCardCostWithIncludedReductionBonus.add(theSelectedCard.getPrice5White() - costReduction.get(4));
+        for(int i=0; i<5; i++) {
+            selectedCardCostWithIncludedReductionBonus.add(theSelectedCard.getCardPrice().get(i) - costReduction.get(i));
+        }
+
+        for(int i=0; i<selectedCardCostWithIncludedReductionBonus.size(); i++) {
+            if(selectedCardCostWithIncludedReductionBonus.get(i) < 0) {
+                selectedCardCostWithIncludedReductionBonus.set(i, 0);
+            }
+        }
 
         for(int i=0; i < selectedCardCostWithIncludedReductionBonus.size(); i++) {
             calculationIfEnoughResourcesToBuy.add(resOwned.get(i) - selectedCardCostWithIncludedReductionBonus.get(i));
@@ -152,10 +166,13 @@ public class PlayerActions {
                 resOwned.set(i, resOwned.get(i) - selectedCardCostWithIncludedReductionBonus.get(i));
                 theCentralBankResources.set(i, theCentralBankResources.get(i) + selectedCardCostWithIncludedReductionBonus.get(i));
             }
-            requestUpdateInResOwned();
+            requestUpdateInResOwned(resOwned);
             requestUpdateInCostReduction(theSelectedCard);
             requestAddPointsToPlayerScore(theSelectedCard);
             showAlertOnScreen("You bought the card - the price will be substracted from your vault.");
+            System.out.println("selectedCard " + selectedCard);
+            cardsOnTheGame.removeBoughtAndDrawNewCard(selectedCard);
+            System.out.println("human after buy: " + humanPlayer.getResOwned() + " " + humanPlayer.getCostReduction());
         } else {
             showAlertOnScreen("You don't have enough resources to buy selected card");
             return;
@@ -170,7 +187,7 @@ public class PlayerActions {
         }
     }
 
-    private void requestUpdateInResOwned() {
+    private void requestUpdateInResOwned(List<Integer> resOwned) {
         if(isHumanTurn) {
             humanPlayer.setResOwned(resOwned);
         }
@@ -188,17 +205,27 @@ public class PlayerActions {
         information.showAndWait();
     }
 
-    public String MakeNewEntryInLog() {
-        String logEntry;
-        logEntry = "test event";
-        return logEntry;
-    }
+    private int numberOfResOwned(boolean isItAboutHumanPlayer) {
+        int numberOfResOwned = 0;
+        List<Integer> theResources = getPlayerResourcesOwned(isItAboutHumanPlayer);
+        for(int i=0; i<theResources.size(); i++) {
+            numberOfResOwned += theResources.get(i);
+        }
 
-    public void ReserveCard() {
-
+        return numberOfResOwned;
     }
 
     public List<Integer> getTheCentralBankResources() {
         return theCentralBankResources;
     }
+
+    //    public String MakeNewEntryInLog() {
+//        String logEntry;
+//        logEntry = "test event";
+//        return logEntry;
+//    }
+//
+//    public void ReserveCard() {
+//
+//    }
 }
