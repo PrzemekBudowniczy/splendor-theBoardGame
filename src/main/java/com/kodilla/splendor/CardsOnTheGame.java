@@ -28,7 +28,7 @@ public class CardsOnTheGame {
         if(setNo == 1) {
             if(checkIfNoMoreCardsOnDeck(1)) {return new Card(true, 1, 1);}
             int randomCardNumber = (int) (Math.random() * (set1CardDeck.size()));
-            System.out.println(randomCardNumber);
+//            System.out.println(randomCardNumber);
             theResultCard = set1CardDeck.get(randomCardNumber);
             set1CardDeck.remove(randomCardNumber);
         } else if(setNo == 2) {
@@ -98,7 +98,7 @@ public class CardsOnTheGame {
             setNo = 3;
             positionInTable = cardIndexInTable - 6;
         }
-        System.out.println("setNo " + setNo + " position " + positionInTable);
+//        System.out.println("setNo " + setNo + " position " + positionInTable);
         ReplaceCardOnTable(setNo, positionInTable);
     }
 

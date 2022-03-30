@@ -152,7 +152,7 @@ public class Splendor extends Application {
             topSideResourcesSelected.get(i).setOpacity(0);
         }
 
-        textHumanScore = new Text("Your score: 0");
+        textHumanScore = new Text("Player 1 score: 0");
         textHumanScore.setFont(Font.font("Arial", FontWeight.BOLD, 30));
         textHumanScore.setUnderline(true);
 
@@ -160,7 +160,7 @@ public class Splendor extends Application {
         leftSideFullDeck.setAlignment(Pos.CENTER);
         leftSideFullDeck.setSpacing(30);
 
-        textComputerScore = new Text("Computer score: 0");
+        textComputerScore = new Text("Player 2 score: 0");
         textComputerScore.setFont(Font.font("Arial", FontWeight.BOLD, 30));
         textComputerScore.setUnderline(true);
 
@@ -351,11 +351,11 @@ public class Splendor extends Application {
     }
 
     public void RefreshViewOfScoreHuman() {
-        textHumanScore.setText("Your score: " + playerActions.getPlayerScore(true));
+        textHumanScore.setText("Player 1 score: " + playerActions.getPlayerScore(true));
     }
 
     public void RefreshViewOfScoreComputer() {
-        textHumanScore.setText("Your score: " + playerActions.getPlayerScore(false));
+        textHumanScore.setText("Player 2 score: " + playerActions.getPlayerScore(false));
     }
 
     public void RefreshViewOfCostReductionHuman() {
